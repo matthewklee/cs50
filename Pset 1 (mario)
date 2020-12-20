@@ -1,0 +1,52 @@
+#include <cs50.h>
+#include <stdio.h>
+
+int main(void)
+{
+    int count = get_int("What is your number? \n");
+    
+    for (int row = 0; row < count; row++)
+    {
+        
+        //////////////////////////////
+        // Print left side of mountain
+        //////////////////////////////
+        
+        for (int space = count; space > row; space--)
+        {
+            printf(" ");
+        }
+        
+        for (int hash = 0; hash < (row+1); hash++)
+        {
+            printf("#");
+        }
+        
+        ///////////////////////////
+        // Print middle of mountain
+        ///////////////////////////
+        
+        printf("  ");
+        
+        ///////////////////////////////
+        // Print right side of mountain
+        /////////////////////////////// 
+         
+        for (int hash = 0; hash < (row+1); hash++)
+        {
+            printf("#");
+        }
+        
+        for (int space = count; space > row; space--)
+        {
+            printf(" ");
+        }
+        
+        
+        printf("\n");
+        
+    }
+    
+    printf("\n");
+
+}
