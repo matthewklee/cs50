@@ -1,0 +1,67 @@
+#include <cs50.h>
+#include <stdio.h>
+#include <math.h>
+
+int main (void)
+{
+    
+    // Get credit card number
+    
+    long ccnum = get_long("What is your credit card number? \n");
+    
+    // Get length
+    
+        int length = 0;
+        long temp = ccnum;
+        
+        while (temp % 10 > 0)
+        {
+            temp = temp / 10;
+            length++;
+        }
+        
+        printf("Length = %i\n",length);
+    
+    // Get first 2 digits
+    
+        int first_digits = ccnum / (pow(10,length-2));
+        
+        printf("First digits = %i\n",first_digits);
+    
+    
+    // Generate checksum
+            
+        long checksum = (ccnum/10) % 10;
+        long remainder = ccnum/10;
+        
+        do
+        {
+            checksum += (remainder/100) % 10;
+            remainder = remainder/100;
+        }
+        while (remainder > 0);
+        
+        printf("Checksum = %li\n",checksum);
+    
+    // Verify type
+        
+        if (checksum % 10 == 0)
+        {
+            if (length == 15 && (first_digits == 34 || first_digits == 37))
+            {
+                printf("Type = Amex\n");
+            }
+            else if (length == 16 && first_digits >=51 && first_digits <=55)
+            {
+                printf("Type = MasterCard\n");
+            }
+            else if ((length == 13 || length == 16) && ((first_digits/10)%10==4))
+            {
+                printf("Type = Visa\n");
+            }
+        }
+        else
+        {
+            printf("Type = Invalid number\n");
+        }
+}
