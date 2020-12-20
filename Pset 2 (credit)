@@ -11,10 +11,10 @@ int main (void)
     
     // Get length
     
-        int length = 0;
+        int length = 1;
         long temp = ccnum;
         
-        while (temp % 10 > 0)
+        while (temp / 10 > 0)
         {
             temp = temp / 10;
             length++;
@@ -30,16 +30,33 @@ int main (void)
     
     
     // Generate checksum
-            
-        long checksum = (ccnum/10) % 10;
+        
+        long checksum = 0;
         long remainder = ccnum/10;
+        temp = 0;
         
         do
         {
-            checksum += (remainder/100) % 10;
+            temp = (remainder % 10)*2;
+            
+            while (temp > 0)
+            {
+                checksum = checksum + temp % 10;
+                temp = temp / 10;
+            }
+            
             remainder = remainder/100;
         }
         while (remainder > 0);
+        
+        remainder = ccnum;
+        
+        do
+        {
+            checksum += remainder % 10;
+            remainder = remainder/100;
+        }
+        while (remainder > 0);        
         
         printf("Checksum = %li\n",checksum);
     
@@ -58,6 +75,10 @@ int main (void)
             else if ((length == 13 || length == 16) && ((first_digits/10)%10==4))
             {
                 printf("Type = Visa\n");
+            }
+            else
+            {
+                printf("Type = Invalid number\n");
             }
         }
         else
