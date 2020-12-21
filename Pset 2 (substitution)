@@ -1,0 +1,100 @@
+#include <cs50.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main(int argc, string argv[])
+{
+
+    
+   // Create cipher array
+    printf("%li\n",strlen(argv[1]));
+    
+    int cipherlen = strlen(argv[1]);
+    char cipher[cipherlen];
+    
+    for (int i=0; i < cipherlen; i++)
+    {
+        cipher[i] = (char) toupper(argv[1][i]);
+    }
+    
+    
+   
+    // Get text input
+    string text = get_string("plaintext: ");
+    
+    int textlen = strlen(text);
+    int textindex[textlen];
+
+    // Make upper case only text
+
+
+    for (int i=0; i<textlen; i++)
+    {
+        textindex[i] = (int) toupper(text[i])-65;
+    }
+    
+    
+   // Create case array
+   
+   int textcase[textlen];
+   
+   for (int i=0; i < textlen; i++)
+   {
+       if (isupper(text[i]))
+       {
+           textcase[i]=1;
+       }
+       else if (islower(text[i]))
+       {
+           textcase[i]=0;
+       }
+       else
+       {
+           printf("Case error");
+       }
+   }    
+
+    // Encrypt Upper
+    
+    char encryptupper[textlen];
+    
+    for (int i=0; i<textlen; i++)
+    {
+        encryptupper[i] = cipher[textindex[i]];
+    }
+    
+    // Encrypt correct case
+    
+    char encrypt[textlen];
+    
+    for (int i=0; i<textlen; i++)
+    {
+        if (textcase[i]==1)
+        {
+            encrypt[i] = encryptupper[i];
+        }
+        else if (textcase[i]==0)
+        {
+            encrypt[i] = tolower(encryptupper[i]);
+        }
+        else
+        {
+            printf("Case error2");
+        }
+    }
+    
+    // Print all characters
+    
+    printf("ciphertext: ");
+    
+    for (int i=0; i<textlen; i++)
+    {
+        printf("%c",encrypt[i]);
+    }
+    printf("\n");
+    
+    
+    
+    return 0;
+}
