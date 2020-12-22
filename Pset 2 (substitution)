@@ -6,8 +6,9 @@
 int main(int argc, string argv[])
 {
 
+
     
-   // Create cipher array
+    // Create cipher array
     printf("%li\n",strlen(argv[1]));
     
     int cipherlen = strlen(argv[1]);
@@ -18,6 +19,12 @@ int main(int argc, string argv[])
         cipher[i] = (char) toupper(argv[1][i]);
     }
     
+    // Error catch
+    if (cipherlen != 26)
+    {
+        printf("Cipher must be 26 characters.");
+        return 0;
+    }
     
    
     // Get text input
