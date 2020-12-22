@@ -51,7 +51,7 @@ int main(int argc, string argv[])
        }
        else
        {
-           printf("Case error");
+           textcase[i]=-1;
        }
    }    
 
@@ -77,6 +77,10 @@ int main(int argc, string argv[])
         else if (textcase[i]==0)
         {
             encrypt[i] = tolower(encryptupper[i]);
+        }
+        else if (textcase[i]==-1)
+        {
+            encrypt[i] = text[i];
         }
         else
         {
