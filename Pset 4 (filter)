@@ -1,0 +1,272 @@
+// helper.c
+
+#include "helpers.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+// Convert image to grayscale
+void grayscale(int height, int width, RGBTRIPLE image[height][width])
+{
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            // Obtain grayscale average for each pixel
+            BYTE sum = image[i][j].rgbtBlue + image[i][j].rgbtGreen + image[i][j].rgbtRed;
+            BYTE avg = sum / 3;
+
+            // Obtain pointer address of the pixel
+            BYTE *pixel_blue = &image[i][j].rgbtBlue;
+            BYTE *pixel_green = &image[i][j].rgbtGreen;
+            BYTE *pixel_red = &image[i][j].rgbtRed;
+
+            // Replace pixel with grayscale equivalent
+            *pixel_blue = avg;
+            *pixel_green = avg;
+            *pixel_red = avg;
+
+        }
+    }
+
+    RGBTRIPLE *temp = &image[10][100];
+
+
+    return;
+}
+
+// Reflect image horizontally
+void reflect(int height, int width, RGBTRIPLE image[height][width])
+{
+    RGBTRIPLE(*image_rev)[width] = calloc(height, width * sizeof(RGBTRIPLE));
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            // Copy reversed image into image_rev
+
+            image_rev[i][j] = image[i][width-j];
+
+        }
+    }
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            // Copy image_rev back into image
+
+            image[i][j] = image_rev[i][j];
+
+        }
+    }
+
+    free(image_rev);
+    return;
+}
+
+
+// Blur image
+void blur(int height, int width, RGBTRIPLE image[height][width])
+{
+    RGBTRIPLE(*image_blur)[width] = calloc(height, width * sizeof(RGBTRIPLE));
+
+    // Blur middle square
+
+    for (int i = 1; i < 50; i++)
+    {
+        for (int j = 1; j < 1; j++)
+        {
+
+            // Average the 9-box square around the pixel
+
+            LONG sum_Blue = 0;
+            LONG sum_Green = 0;
+            LONG sum_Red = 0;
+
+            for (int x = -1; x<=1; x++)
+            {
+                for (int y = -1; y<=1; y++)
+                {
+
+                    sum_Blue += image[i+x][j+y].rgbtBlue;
+                    sum_Green += image[i+x][j+y].rgbtGreen;
+                    sum_Red += image[i+x][j+y].rgbtRed;
+
+                }
+            }
+
+
+
+            BYTE avg_Blue = sum_Blue / 9;
+            BYTE avg_Green = sum_Green / 9;
+            BYTE avg_Red = sum_Red / 9;
+
+
+
+            image_blur[i][j].rgbtBlue = avg_Blue;
+            image_blur[i][j].rgbtGreen = avg_Green;
+            image_blur[i][j].rgbtRed = avg_Red;
+
+
+        }
+    }
+
+
+    // Copy image_blur to image
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            image[i][j] = image_blur[i][j];
+
+
+        }
+    }
+
+
+    free(image_blur);
+
+    return;
+}
+
+// Detect edges
+void edges(int height, int width, RGBTRIPLE image[height][width])
+{
+
+    RGBTRIPLE(*image_edges)[width] = calloc(height, width * sizeof(RGBTRIPLE));
+
+    // Generate the Gx and Gy values for each RGB of each pixel
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+
+            LONG Gx_blue = 0;
+            LONG Gy_blue = 0;
+            LONG Gx_green = 0;
+            LONG Gy_green = 0;
+            LONG Gx_red = 0;
+            LONG Gy_red = 0;
+
+                // Calculate Gx
+
+                for (int x = -1; x <=1; x++)
+                {
+                    for (int y = -1; y <=1; y++)
+                    {
+                        int factor = 0;
+                        switch (y)
+                        {
+                            case -1 :
+                                switch (x)
+                                {
+                                    case -1 : factor = -1; break;
+                                    case 0 : factor = -2; break;
+                                    case 1 : factor = -1; break;
+                                }
+                            case 0 :
+                                switch (x)
+                                {
+                                    case -1 : factor = 0; break;
+                                    case 0 : factor = 0; break;
+                                    case 1 : factor = 0; break;
+                                }
+                            case 1 :
+                                switch (x)
+                                {
+                                    case -1 : factor = 1; break;
+                                    case 0 : factor = 2; break;
+                                    case 1 : factor = 1; break;
+                                }
+                        }
+
+                        Gx_blue += factor * image[i+x][j+y].rgbtBlue;
+                        Gx_green += factor * image[i+x][j+y].rgbtGreen;
+                        Gx_red += factor * image[i+x][j+y].rgbtRed;
+
+
+                    }
+                }
+
+
+
+                // Calculate Gy
+
+                for (int x = -1; x <=1; x++)
+                {
+                    for (int y = -1; y <=1; y++)
+                    {
+                        int factor = 0;
+                        switch (y)
+                        {
+                            case -1 :
+                                switch (x)
+                                {
+                                    case -1 : factor = -1; break;
+                                    case 0 : factor = 0; break;
+                                    case 1 : factor = 1; break;
+                                }
+                            case 0 :
+                                switch (x)
+                                {
+                                    case -1 : factor = -2; break;
+                                    case 0 : factor = 0; break;
+                                    case 1 : factor = 2; break;
+                                }
+                            case 1 :
+                                switch (x)
+                                {
+                                    case -1 : factor = -1; break;
+                                    case 0 : factor = 0; break;
+                                    case 1 : factor = 1; break;
+                                }
+                        }
+
+                        Gy_blue += factor * image[i+x][j+y].rgbtBlue;
+                        Gy_green += factor * image[i+x][j+y].rgbtGreen;
+                        Gy_red += factor * image[i+x][j+y].rgbtRed;
+
+
+                    }
+                }
+
+
+                // Calculate new color
+
+                image_edges[i][j].rgbtBlue = sqrt(pow(Gx_blue,2)+pow(Gy_blue,2));
+                image_edges[i][j].rgbtGreen = sqrt(pow(Gx_green,2)+pow(Gy_green,2));
+                image_edges[i][j].rgbtRed = sqrt(pow(Gx_red,2)+pow(Gy_red,2));
+
+        }
+    }
+
+
+
+
+    // Copy image_edges over to images
+
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            // Copy image_rev back into image
+
+            image[i][j] = image_edges[i][j];
+
+            printf("Blue = %i\n",image[i][j].rgbtBlue);
+            printf("Green = %i\n",image[i][j].rgbtGreen);
+            printf("Red = %i\n",image[i][j].rgbtRed);
+
+
+        }
+    }
+
+    free(image_edges);
+
+    return;
+}
